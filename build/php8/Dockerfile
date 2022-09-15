@@ -1,24 +1,19 @@
-FROM php:8-fpm
+FROM php:8.1.10-fpm-buster
 WORKDIR /tmp
 COPY src/sources.list .
 COPY src ./src
-COPY src/fiber /usr/src/php/ext/fiber/
-COPY src/event /usr/src/php/ext/event/
 WORKDIR /tmp/src
 RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak \
 && mv /tmp/src/sources.list /etc/apt/sources.list \
-&& apt-get update \
+&& apt update \
 
 ### 默认扩展（docke镜像提供）
-&& apt-get install -y net-tools psmisc procps strace libevent-dev libssl-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libbz2-dev libgmp-dev libffi-dev libzip-dev libxml2-dev unzip \
-&& docker-php-ext-install sysvmsg sysvsem sysvshm bcmath bz2 calendar exif ffi gd gettext gmp intl mysqli opcache pcntl pdo_mysql soap sockets zip \
-&& cd /usr/src/php/ext/event && docker-php-source extract && docker-php-ext-install --ini-name zevent.ini event \
-&& cd /usr/src/php/ext/fiber && docker-php-source extract && docker-php-ext-install fiber \
+&& apt install -y firebird-dev libxslt-dev libsodium-dev libtidy-dev libpq-dev libsnmp-dev libpspell-dev  libsqlite3-dev libonig-dev libldb-dev libldap2-dev libkrb5-dev libc-client2007e-dev libenchant-dev libcurl4-openssl-dev net-tools psmisc procps strace libevent-dev libssl-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libbz2-dev libgmp-dev libffi-dev libzip-dev libxml2-dev unzip \
+&& docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+&& docker-php-ext-install -j 16 pdo_firebird zend_test xsl tidy sodium snmp pspell shmop posix phar pgsql pdo_sqlite pdo_pgsql pdo mbstring ldap imap ftp filter fileinfo enchant dom dl_test dba curl ctype sysvmsg sysvsem sysvshm bcmath bz2 calendar exif ffi gd gettext gmp intl mysqli opcache pcntl pdo_mysql soap sockets zip \
 && cd /tmp/src \
 ### redis
 && pecl install redis-5.3.4.tgz && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini \
-### xdebugs
-&& pecl install xdebug-3.0.4.tgz && echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
 ### memcache
 && pecl install memcache-8.0.tgz && echo "extension=memcache.so" > /usr/local/etc/php/conf.d/memcache.ini \
 ### composer
