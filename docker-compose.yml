@@ -2,6 +2,7 @@ version: "3"
 
 services:
   mysql:
+    container_name: mysql
     image: mariadb:10.6
     restart: always
     environment:
@@ -15,6 +16,7 @@ services:
       - app
 
   php8:
+    container_name: php8
     build:
       context: ./build/php8
     restart: always
@@ -31,6 +33,7 @@ services:
       - app
 
   nginx:
+    container_name: nginx
     image: nginx:1.21.0-alpine
     restart: always
     volumes:
@@ -46,6 +49,7 @@ services:
       - app
 
   redis:
+    container_name: redis
     image: redis:6.2.4-alpine
     restart: always
     ports:
@@ -54,12 +58,14 @@ services:
       - app
 
   memcached:
+    container_name: memcached
     image: memcached:1.6.9
     restart: always
     networks:
       - app
 
   rabbitmq:
+    container_name: rabbitmq
     image: rabbitmq:3.8.17-management
     restart: always
     ports:
