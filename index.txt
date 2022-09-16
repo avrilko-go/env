@@ -1,1 +1,1 @@
- oci8 pdo_dblib  pdo_oci 
+ oci8 pdo_oci 
